@@ -21,8 +21,8 @@ return new class extends Migration
             $table->string('city')->nullable();
             $table->string('address')->nullable();
             $table->string('zip_code')->nullable();
-            $table->boolean('status')->nullable()->default(1);
-            $table->enum('role', [1,2,3])->comment('1 - customer, 2 - admin, 3 - superadmin')->default(1);
+            $table->boolean('status')->default(1);
+            $table->enum('role', [1,2,3])->comment('1 - customer, 2 - admin, 3 - super_admin')->default(1);
             $table->timestamps();
         });
     }
