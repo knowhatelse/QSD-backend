@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ColorController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -20,3 +21,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::post('register',[AuthController::class,'register']);
+
+//Color endpoint routes
+Route::get('color', [ColorController::class, 'getColors']);
+Route::post('color', [ColorController::class, 'addColor']);
+Route::put('color/{id}', [ColorController::class, 'updateColor']);
+Route::delete('color/{id}', [ColorController::class, 'deleteColor']);
