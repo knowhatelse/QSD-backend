@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\ColorController;
+use App\Http\Controllers\SizeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -34,3 +35,9 @@ Route::get('brand', [BrandController::class, 'getBrands']);
 Route::post('brand', [BrandController::class, 'addBrand']);
 Route::put('brand/{id}', [BrandController::class, 'updateBrand']);
 Route::delete('brand/{id}', [BrandController::class, 'deleteBrand']);
+
+//Size endpoint routes
+Route::get('size', [SizeController::class, 'getSizes']);
+Route::post('size', [SizeController::class, 'addSize']);
+Route::put('size/{id}', [SizeController::class, 'updateSize']);
+Route::delete('size/{id}', [SizeController::class, 'deleteSize']);
