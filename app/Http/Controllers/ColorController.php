@@ -100,7 +100,7 @@ class ColorController extends Controller
             $color->delete();
             return $this->infoResponse(200, 'The record has been successfully deleted!');
         }else{
-            return $this->infoResponse(200, 'No record found in the database with the given id...');
+            return $this->infoResponse(404, 'No record found in the database with the given id...');
         }
     }
 }
