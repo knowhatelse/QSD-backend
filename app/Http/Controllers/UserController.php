@@ -9,21 +9,68 @@ use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
-    private function infoResponse($status, $message = '', $record = null): JsonResponse {
+    //Helpers function
+    private function infoResponse($status, $message, $record = null): JsonResponse {
         return response()->json([
             'message' => $message,
             'users' => $record
         ],$status);
     }
 
+    private function usersResponse(int $numberOfAdmins, $users): JsonResponse {
+        return response()->json([
+            'num_of_admins' => $numberOfAdmins,
+            'users' => $users
+        ]);
+    }
 
+    private function adminCounter($users): int {
+        $adminCounter = 0;
+
+        foreach ($users as $u){
+            if($u->role == 2){
+                ++$adminCounter;
+            }
+        }
+        return $adminCounter;
+    }
+
+    private function superAdminCounter(): int {
+        $users = User::all();
+        $super_admin_counter = 0;
+
+        foreach ($users as $u){
+            if($u->role == 3){
+                ++$super_admin_counter;
+            }
+        }
+        return $super_admin_counter;
+    }
+
+    private function checkEmail($users,$request): bool {
+        foreach ($users as $u){
+            if($u->email == $request->email){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private function banUnbanUser($user, bool $ban_status): void {
+        $user->update([
+            'status' => $ban_status
+        ]);
+    }
+
+
+    //API methods
     public function getUsers(): JsonResponse {
         $users = User::all();
 
         if($users->count() > 0){
-            return $this->infoResponse($users);
+            return $this->usersResponse($this->adminCounter($users), $users);
         }else{
-            return $this->infoResponse(404, 'No records found in the database...');
+            return $this->infoResponse(404, 'No users were found in the database...');
         }
     }
 
@@ -31,7 +78,7 @@ class UserController extends Controller
         $user = User::find($id);
 
         if($user){
-            return $this->recordResponse($user);
+            return $this->infoResponse(200, '', $user);
         }else{
             return $this->infoResponse(404, 'No user was found with the given id...');
         }
@@ -50,6 +97,7 @@ class UserController extends Controller
 
         if($validator->fails()){
             return $this->infoResponse(422, $validator->messages());
+
         }else{
             $user = User::find($id);
             $users = User::all();
@@ -58,15 +106,9 @@ class UserController extends Controller
                 return $this->infoResponse(404, 'No user was found with the given id...');
             }
 
-            if($user->status == 0){
-                return $this->infoResponse(403, 'This user is currently banned.');
-            }
-
             if($users){
-                foreach ($users as $u){
-                    if($u->email == $request->email){
-                        return $this->infoResponse(422,'The email is already taken!');
-                    }
+                if(!$this->checkEmail($users,$request)){
+                    return $this->infoResponse(422, 'This email is already taken!');
                 }
             }
 
@@ -81,7 +123,7 @@ class UserController extends Controller
             ]);
 
             if($user){
-                return $this->infoResponse(200,'Request updated successfully!');
+                return $this->infoResponse(200,'User updated successfully!');
             }else{
                 return $this->infoResponse(500,'Something went wrong!');
             }
@@ -95,20 +137,22 @@ class UserController extends Controller
             return $this->infoResponse(404,'No user was found with the given id...');
 
         }else{
+            if($user->role == 3){
+                return $this->infoResponse(403, "Super admin cannot be banned");
+            }
+
             if($user->status == 0){
-                return $this->infoResponse(422,'The user is already banned!');
+                $this->banUnbanUser($user, 1);
+                return $this->infoResponse(200, 'The user was successfully unbanned!');
 
             }else{
-                $user->update([
-                    'status' => 0
-                ]);
+                $this->banUnbanUser($user,0);
+                return $this->infoResponse(200, 'The user was successfully banned!');
             }
-            return $this->infoResponse(200, 'The user was successfully banned!');
         }
     }
 
-    public function updateRole($user_id, $role_id): JsonResponse
-    {
+    public function updateRole($user_id, $role_id): JsonResponse {
         $user = User::find($user_id);
 
         if(!$user_id){
@@ -116,7 +160,13 @@ class UserController extends Controller
         }
 
         if(!in_array($role_id, [1,2,3])){
-            return $this->infoResponse(422, 'The given role_id was not found!');
+            return $this->infoResponse(422, 'The given role id was not found!');
+        }else{
+            if($user->role == 3){
+                if($this->superAdminCounter() == 1){
+                    return $this->infoResponse(403, "The last super admin cannot be changed!");
+                }
+            }
         }
 
         $user->update([
@@ -133,7 +183,7 @@ class UserController extends Controller
             $user->delete();
             return $this->infoResponse(200, 'The user has been successfully deleted!');
         }else{
-            return $this->infoResponse(500, 'Something went wrong!');
+            return $this->infoResponse(404, 'No user was found with the given id...');
         }
     }
 }
