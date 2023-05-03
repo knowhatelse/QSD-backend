@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('zip_code');
             $table->string('phone');
             $table->string('transaction_id'); //Treba dodati referencu
+            $table->unsignedBigInteger('user_id');
             $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
         });
