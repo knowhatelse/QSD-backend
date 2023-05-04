@@ -29,14 +29,14 @@ class AuthController extends Controller
 
     public function login(Request $request){
         $request->validate([
-            'email'=>'required',
+            'email'=>'required|unique:users',
             'password'=>'required|string'
         ]);
         $credentials = request(['email','password']);
         if(!Auth::attempt($credentials)){
-            return response()->json(['message'=>'Unauthorized'],401);
+            return response()->json(['message'=>'Invalid credentials'],401);
         }
-        $user=$request->user();
+        $user=Auth::user();
         $tokenResult= $user->createToken('Personal Access Token');
         $token = $tokenResult->token;
         $token->expires_at=Carbon::now()->addMinutes(60);
