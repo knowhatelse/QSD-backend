@@ -9,26 +9,23 @@ use Illuminate\Support\Facades\Validator;
 
 class SizeController extends Controller
 {
+    //Helpers functions
     private function infoResponse($status, $message, $record = null): JsonResponse {
         return response()->json([
             'message' => $message,
-            'color' => $record
+            'size' => $record
         ],$status);
     }
 
-    private function recordResponse($record): JsonResponse {
-        return response()->json([
-            'colors' => $record
-        ],200);
-    }
 
+    //Size endpoint methods
     public function getSizes(): JsonResponse {
         $sizes = Size::all();
 
         if($sizes->count() > 0) {
-            return $this->recordResponse($sizes);
+            return $this->infoResponse(200, '', $sizes);
         }else{
-            return $this->infoResponse(404,'No records found in the database...');
+            return $this->infoResponse(404,'No sizes were found in the database...');
         }
     }
 
@@ -53,7 +50,7 @@ class SizeController extends Controller
         }
 
         if($size){
-            return $this->infoResponse(200, 'Request added successfully!', $size);
+            return $this->infoResponse(200, 'Size added successfully!', $size);
         }else {
             return $this->infoResponse(500, 'Something went wrong!');
         }
@@ -70,7 +67,7 @@ class SizeController extends Controller
             $size = Size::find($id);
 
             if(!$size){
-                return $this->infoResponse(404, 'No record found in the database with the given id...');
+                return $this->infoResponse(404, 'No size was found in the database with the given id...');
             }
 
             $size -> update([
@@ -79,7 +76,7 @@ class SizeController extends Controller
         }
 
         if($size){
-            return $this->infoResponse(200, 'Request updated successfully!', $size);
+            return $this->infoResponse(200, 'Size updated successfully!', $size);
         } else {
             return $this->infoResponse(500, 'Something went wrong!');
         }
@@ -90,9 +87,9 @@ class SizeController extends Controller
 
         if($size){
             $size->delete();
-            return $this->infoResponse(200, 'The record has been successfully deleted!');
+            return $this->infoResponse(200, 'The size has been successfully deleted!');
         } else {
-            return $this->infoResponse(404, 'No record found in the database with the given id...');
+            return $this->infoResponse(404, 'No sizes was found in the database with the given id...');
         }
     }
 }
