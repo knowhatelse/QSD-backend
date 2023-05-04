@@ -9,27 +9,23 @@ use Illuminate\Support\Facades\Validator;
 
 class BrandController extends Controller
 {
+    //Helpers methods
     private function infoResponse($status, $message, $record = null): JsonResponse {
         return response()->json([
             'message' => $message,
-            'color' => $record
+            'brand' => $record
         ],$status);
     }
 
-    private function recordResponse($record): JsonResponse {
-        return response()->json([
-            'colors' => $record
-        ],200);
-    }
 
-
+    //Brand endpoint methods
     public function getBrands(): JsonResponse {
         $brands = Brand::all();
 
         if($brands->count() > 0){
-            return $this->recordResponse($brands);
+            return $this->infoResponse(200, '', $brands);
         }else{
-            return $this->infoResponse(404,'No records found in the database...');
+            return $this->infoResponse(404,'No brands were found in the database...');
         }
     }
 
@@ -55,7 +51,7 @@ class BrandController extends Controller
         }
 
         if($brand){
-            return $this->infoResponse(200,'Request added successfully!');
+            return $this->infoResponse(200,'Brand added successfully!');
         }else{
             return $this->infoResponse(500,'Something went wrong!');
         }
@@ -72,7 +68,7 @@ class BrandController extends Controller
             $brand = Brand::find($id);
 
             if(!$brand){
-                return $this->infoResponse(404, 'No record found in the database with the given id...');
+                return $this->infoResponse(404, 'No brand was found in the database with the given id...');
             }
 
             $brand->update([
@@ -80,7 +76,7 @@ class BrandController extends Controller
             ]);
 
             if($brand){
-                return $this->infoResponse(200,'Request updated successfully!');
+                return $this->infoResponse(200,'Brand updated successfully!');
             }else{
                 return $this->infoResponse(500,'Something went wrong!');
             }
@@ -94,7 +90,7 @@ class BrandController extends Controller
             $brand->delete();
             return $this->infoResponse(200, 'The record has been successfully deleted!');
         }else{
-            return $this->infoResponse(200, 'No record found in the database with the given id...');
+            return $this->infoResponse(404, 'No brand was found in the database with the given id...');
         }
     }
 }
