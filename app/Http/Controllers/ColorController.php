@@ -8,6 +8,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Validator;
 class ColorController extends Controller
 {
+    //Helpers functions
     private function infoResponse($status, $message, $record = null): JsonResponse {
         return response()->json([
             'message' => $message,
@@ -15,25 +16,19 @@ class ColorController extends Controller
         ],$status);
     }
 
-    private function recordResponse($record): JsonResponse {
-        return response()->json([
-            'colors' => $record
-        ],200);
-    }
 
-    public function getColors(): JsonResponse
-    {
+    //Color endpoint method
+    public function getColors(): JsonResponse {
         $colors = Color::all();
 
         if($colors->count() > 0){
-           return $this->recordResponse($colors);
+           return $this->infoResponse(200, '', $colors);
         }else{
-            return $this->infoResponse(404, 'No records found in the database...');
+            return $this->infoResponse(404, 'No colors were found in the database...');
         }
     }
 
-    public function addColor(Request $request): JsonResponse
-    {
+    public function addColor(Request $request): JsonResponse {
         $validator = Validator::make($request->all(), [
            'name' => 'string|required',
            'hex_code' => 'string|required'
@@ -42,8 +37,8 @@ class ColorController extends Controller
         $colors = Color::all();
 
         foreach ($colors as $c){
-            if($c->name == $request->name){
-                return $this->infoResponse(422, 'The color already exists!', $c);
+            if(($c->name == $request->name) || ($c->hex_code == $request->hex_code)){
+                return $this->infoResponse(422, 'The color already exists!');
             }
         }
 
@@ -57,7 +52,7 @@ class ColorController extends Controller
         }
 
         if($color){
-            return $this->infoResponse(200, 'Request added successfully!', $color);
+            return $this->infoResponse(200, 'Color added successfully!', $color);
         }else {
             return $this->infoResponse(500, 'Something went wrong!');
         }
@@ -76,7 +71,7 @@ class ColorController extends Controller
             $color = Color::find($id);
 
             if(!$color){
-                return $this->infoResponse(404, 'No record found in the database with the given id...');
+                return $this->infoResponse(404, 'No color was found in the database with the given id...');
             }
 
             $color->update([
@@ -86,7 +81,7 @@ class ColorController extends Controller
         }
 
         if($color){
-            return $this->infoResponse(200, 'Request updated successfully!', $color);
+            return $this->infoResponse(200, 'Color updated successfully!', $color);
         }else {
             return $this->infoResponse(500, 'Something went wrong!');
         }
@@ -98,9 +93,9 @@ class ColorController extends Controller
 
         if($color){
             $color->delete();
-            return $this->infoResponse(200, 'The record has been successfully deleted!');
+            return $this->infoResponse(200, 'The color has been successfully deleted!');
         }else{
-            return $this->infoResponse(200, 'No record found in the database with the given id...');
+            return $this->infoResponse(404, 'No color was found in the database with the given id...');
         }
     }
 }
