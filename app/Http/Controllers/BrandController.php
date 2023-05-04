@@ -76,7 +76,7 @@ class BrandController extends Controller
             ]);
 
             if($brand){
-                return $this->infoResponse(200,'Brand updated successfully!');
+                return $this->infoResponse(200,'Brand updated successfully!', $brand);
             }else{
                 return $this->infoResponse(500,'Something went wrong!');
             }
