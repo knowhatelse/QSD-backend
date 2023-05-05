@@ -6,6 +6,7 @@ use App\Models\Brand;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class BrandController extends Controller
 {
@@ -21,26 +22,21 @@ class BrandController extends Controller
     //Brand endpoint methods
     public function getBrands(): JsonResponse {
         $brands = Brand::all();
-
-        if($brands->count() > 0){
-            return $this->infoResponse(200, '', $brands);
-        }else{
-            return $this->infoResponse(404,'No brands were found in the database...');
-        }
+        return $this->infoResponse(200, '', $brands);
     }
 
     public function addBrand(Request $request): JsonResponse {
         $validator = Validator::make($request->all(), [
-           'name' => 'string|required'
+           'name' => 'string|required|exists:brands,id'
         ]);
 
-        $brands = Brand::all();
+        //$brands = Brand::all();
 
-        foreach ($brands as $b){
+        /*foreach ($brands as $b){
             if($b->name == $request->name){
                 return $this->infoResponse(422,'The brand already exists!');
             }
-        }
+        }*/
 
         if($validator->fails()){
             return $this->infoResponse(422,$validator->messages());
@@ -75,11 +71,8 @@ class BrandController extends Controller
                 'name' => $request->name
             ]);
 
-            if($brand){
-                return $this->infoResponse(200,'Brand updated successfully!', $brand);
-            }else{
-                return $this->infoResponse(500,'Something went wrong!');
-            }
+
+            return $this->infoResponse(200, 'Brand updated successfully!', $brand);
         }
     }
 
