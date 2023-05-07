@@ -29,7 +29,7 @@ class AuthController extends Controller
 
     public function login(Request $request){
         $request->validate([
-            'email'=>'required|unique:users',
+            'email'=>'required|exists:users',
             'password'=>'required|string'
         ]);
         $credentials = request(['email','password']);
