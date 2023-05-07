@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BrandController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ColorController;
 use App\Http\Controllers\SizeController;
 use App\Http\Controllers\UserController;
@@ -50,3 +51,9 @@ Route::put('user/{id}/update_user', [UserController::class, 'updateUser']);
 Route::put('user/{user_id}/update_role/{role_id}', [UserController::class, 'updateRole']);
 Route::put('user/{id}/ban_user', [UserController::class, 'banUser']);
 Route::delete('user/{id}', [UserController::class, 'deleteUser']);
+
+//Category endpoint
+Route::get('category', [CategoryController::class,'getCategories']);
+Route::post('category', [CategoryController::class,'addCategory']);
+Route::put('category/{id}', [CategoryController::class,'updateCategory']);
+Route::delete('category/{id}', [CategoryController::class,'deleteCategory']);
