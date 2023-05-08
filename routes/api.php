@@ -39,5 +39,5 @@ Route::delete('brand/{id}', [BrandController::class, 'deleteBrand']);
 //Size endpoint routes
 Route::get('size', [SizeController::class, 'getSizes']);
 Route::post('size', [SizeController::class, 'addSize']);
-Route::put('size/{id}', [SizeController::class, 'updateSize']);
+Route::put('size', [SizeController::class, 'updateSize']);
 Route::delete('size/{id}', [SizeController::class, 'deleteSize']);
