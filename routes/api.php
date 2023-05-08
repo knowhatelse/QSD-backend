@@ -38,7 +38,7 @@ Route::delete('color/{id}', [ColorController::class, 'deleteColor']);
 //Brand endpoint routes
 Route::get('brand', [BrandController::class, 'getBrands']);
 Route::post('brand', [BrandController::class, 'addBrand']);
-Route::put('brand/{id}', [BrandController::class, 'updateBrand']);
+Route::put('brand', [BrandController::class, 'updateBrand']);
 Route::delete('brand/{id}', [BrandController::class, 'deleteBrand']);
 
 //Size endpoint routes
