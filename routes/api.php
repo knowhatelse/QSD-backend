@@ -27,7 +27,7 @@ Route::post('register',[AuthController::class,'register']);
 //Color endpoint routes
 Route::get('color', [ColorController::class, 'getColors']);
 Route::post('color', [ColorController::class, 'addColor']);
-Route::put('color/{id}', [ColorController::class, 'updateColor']);
+Route::put('color', [ColorController::class, 'updateColor']);
 Route::delete('color/{id}', [ColorController::class, 'deleteColor']);
 
 //Brand endpoint routes
