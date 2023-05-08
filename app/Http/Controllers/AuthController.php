@@ -49,6 +49,20 @@ class AuthController extends Controller
             'expires_at'=>Carbon::parse($tokenResult->token->expires_at)->toDateTimeString()
         ]]);
     }
+    
+    public function changePassword(Request $request){
+        $request->validate([
+            'old_password'=>'required',
+            'new_password'=>'required',
+        ]);
+        $user=auth()->guard('api')->user();
+        if(!Hash::check($request->old_password, $user->password)){
+            return response()->json(['message'=>'Wrong old password']);
+        }
+        $user->password=Hash::make($request->new_password);
+        $user->save();
+        return response()->json(['message'=>'Successfully changed']);
+        
     public function logout(Request $request){
         $user = auth()->guard('api')->user();
         if ($user) {
