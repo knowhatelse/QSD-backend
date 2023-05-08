@@ -84,9 +84,8 @@ class UserController extends Controller
 
         if($validator->fails()){
             return $this->infoResponse(422, $validator->messages());
-
         }else{
-            $user = User::find($request->id);
+            $user = User::find($request->id);  
 
             if(!$user){
                 return $this->infoResponse(404, 'No user was found with the given id...');
@@ -146,9 +145,7 @@ class UserController extends Controller
         if($user->role == 3){
             if($this->superAdminCounter() == 1){
                 return $this->infoResponse(403, "The last super admin cannot be changed!");
-            }
-        }
-
+        
         $user->update([
             'role' => $role_id
         ]);
