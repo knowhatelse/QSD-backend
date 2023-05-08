@@ -49,4 +49,13 @@ class AuthController extends Controller
             'expires_at'=>Carbon::parse($tokenResult->token->expires_at)->toDateTimeString()
         ]]);
     }
+    public function logout(Request $request){
+        $user = auth()->guard('api')->user();
+        if ($user) {
+            $user->token()->revoke();
+            return response()->json(['message' => 'Successfully logged out'], 200);
+        } else {
+            return response()->json(['message' => 'Unauthenticated.'], 401);
+        }
+    }
 }
