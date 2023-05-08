@@ -25,6 +25,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::post('register',[AuthController::class,'register']);
+Route::post('login',[AuthController::class,'login']);
 
 //Color endpoint routes
 Route::get('color', [ColorController::class, 'getColors']);
@@ -57,3 +58,5 @@ Route::get('category', [CategoryController::class,'getCategories']);
 Route::post('category', [CategoryController::class,'addCategory']);
 Route::put('category/{id}', [CategoryController::class,'updateCategory']);
 Route::delete('category/{id}', [CategoryController::class,'deleteCategory']);
+
+
