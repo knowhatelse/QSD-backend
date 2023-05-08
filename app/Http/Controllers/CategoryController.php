@@ -17,36 +17,17 @@ class CategoryController extends Controller
         ],$status);
     }
 
-    private function checkCategories($request){
-        $categories = Category::all();
-        foreach($categories as $c){
-            if($c->name == $request->name){
-                return true;
-            }
-        }
-        return false;
-    }
-
 
     //Category endpoint
     public function getCategories(): JsonResponse {
         $categories = Category::all();
-
-        if($categories->count() > 0){
-            return $this->infoResponse(200, '', $categories);
-        }else{
-            return $this->infoResponse(404, 'No categories were found in the database...');
-        }
+        return $this->infoResponse(200, '', $categories);
     }
 
     public function addCategory(Request $request): JsonResponse {
         $validator = Validator::make($request->all(),[
-            'name' => 'string|required'
+            'name' => 'string|required|unique:categories,name'
         ]);
-
-        if($this->checkCategories($request)){
-            return $this->infoResponse(422, 'This category already exists!');
-        }
 
         if($validator->fails()){
             return $this->infoResponse(422, $validator->messages());
@@ -56,27 +37,20 @@ class CategoryController extends Controller
             ]);
         }
 
-        if($category){
-            return $this->infoResponse(200, 'Category added successfully!');
-        }else{
-            return $this->infoResponse(500, 'Something went wrong!');
-        }
+        return $this->infoResponse(200, 'Category added successfully!');
     }
 
-    public function updateCategory($id, Request $request): JsonResponse {
+    public function updateCategory(Request $request): JsonResponse {
         $validator = Validator::make($request->all(),[
-            'name' => 'string|required'
+            'id' => 'numeric|required|exists:categories,id',
+            'name' => 'string|required|unique:categories,name'
         ]);
 
         if($validator->fails()){
             return $this->infoResponse(422, $validator->messages());
         }
 
-        if($this->checkCategories($request)){
-            return $this->infoResponse(422, 'This category name has been already taken!');
-        }
-
-        $category = Category::find($id);
+        $category = Category::find($request->id);
 
         if(!$category){
             return $this->infoResponse(404, 'No category was found in the database with the given id...');
@@ -86,11 +60,7 @@ class CategoryController extends Controller
             ]);
         }
 
-        if($category){
-            return $this->infoResponse(200, 'The category was successfully updated', $category);
-        }else{
-            return $this->infoResponse(500, 'Something went wrong!');
-        }
+        return $this->infoResponse(200, 'The category was successfully updated', $category);
     }
 
     public function deleteCategory($id): JsonResponse {

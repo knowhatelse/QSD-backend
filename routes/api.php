@@ -55,5 +55,5 @@ Route::delete('user/{id}', [UserController::class, 'deleteUser']);
 //Category endpoint
 Route::get('category', [CategoryController::class,'getCategories']);
 Route::post('category', [CategoryController::class,'addCategory']);
-Route::put('category/{id}', [CategoryController::class,'updateCategory']);
+Route::put('category', [CategoryController::class,'updateCategory']);
 Route::delete('category/{id}', [CategoryController::class,'deleteCategory']);
