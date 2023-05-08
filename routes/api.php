@@ -46,7 +46,7 @@ Route::delete('size/{id}', [SizeController::class, 'deleteSize']);
 //User endpoint routes
 Route::get('user', [UserController::class, 'getUsers']);
 Route::get('user/{id}', [UserController::class, 'getUserById']);
-Route::put('user/{id}/update_user', [UserController::class, 'updateUser']);
+Route::put('user', [UserController::class, 'updateUser']);
 Route::put('user/{user_id}/update_role/{role_id}', [UserController::class, 'updateRole']);
 Route::put('user/{id}/ban_user', [UserController::class, 'banUser']);
 Route::delete('user/{id}', [UserController::class, 'deleteUser']);
