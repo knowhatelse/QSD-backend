@@ -47,15 +47,6 @@ class UserController extends Controller
         return $super_admin_counter;
     }
 
-    private function checkEmail($users,$request): bool {
-        foreach ($users as $u){
-            if($u->email == $request->email){
-                return false;
-            }
-        }
-        return true;
-    }
-
     private function banUnbanUser($user, bool $ban_status): void {
         $user->update([
             'status' => $ban_status
@@ -66,12 +57,7 @@ class UserController extends Controller
     //API methods
     public function getUsers(): JsonResponse {
         $users = User::all();
-
-        if($users->count() > 0){
-            return $this->usersResponse($this->adminCounter($users), $users);
-        }else{
-            return $this->infoResponse(404, 'No users were found in the database...');
-        }
+        return $this->usersResponse($this->adminCounter($users), $users);
     }
 
     public function getUserById($id): JsonResponse {
@@ -84,11 +70,12 @@ class UserController extends Controller
         }
     }
 
-    public function updateUser($id, Request $request): JsonResponse {
+    public function updateUser(Request $request): JsonResponse {
         $validator = Validator::make($request->all(),[
+            'id' =>'numeric|required|exists:users,id',
             'first_name' => 'string|required',
             'last_name' => 'string|required',
-            'email' => 'string|required',
+            'email' => 'string|required|unique:users,email',
             'phone' => 'string',
             'city' => 'string',
             'address' => 'string',
@@ -97,19 +84,11 @@ class UserController extends Controller
 
         if($validator->fails()){
             return $this->infoResponse(422, $validator->messages());
-
         }else{
-            $user = User::find($id);
-            $users = User::all();
+            $user = User::find($request->id);  
 
             if(!$user){
                 return $this->infoResponse(404, 'No user was found with the given id...');
-            }
-
-            if($users){
-                if(!$this->checkEmail($users,$request)){
-                    return $this->infoResponse(422, 'This email is already taken!');
-                }
             }
 
             $user -> update([
@@ -122,11 +101,7 @@ class UserController extends Controller
                 'zip_code' => $request->zip_code,
             ]);
 
-            if($user){
-                return $this->infoResponse(200,'User updated successfully!');
-            }else{
-                return $this->infoResponse(500,'Something went wrong!');
-            }
+            return $this->infoResponse(200,'User updated successfully!');
         }
     }
 
@@ -153,22 +128,24 @@ class UserController extends Controller
     }
 
     public function updateRole($user_id, $role_id): JsonResponse {
+        $validator = Validator::make(['role' => $role_id], [
+            'role' => 'integer|required|in:1,2,3'
+        ]);
+
+        if($validator->fails()){
+            return $this->infoResponse(422, $validator->messages());
+        }
+
         $user = User::find($user_id);
 
-        if(!$user_id){
+        if(!$user){
             return $this->infoResponse(404, 'No user was found with the given id...');
         }
 
-        if(!in_array($role_id, [1,2,3])){
-            return $this->infoResponse(422, 'The given role id was not found!');
-        }else{
-            if($user->role == 3){
-                if($this->superAdminCounter() == 1){
-                    return $this->infoResponse(403, "The last super admin cannot be changed!");
-                }
-            }
-        }
-
+        if($user->role == 3){
+            if($this->superAdminCounter() == 1){
+                return $this->infoResponse(403, "The last super admin cannot be changed!");
+        
         $user->update([
             'role' => $role_id
         ]);
