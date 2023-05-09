@@ -20,27 +20,14 @@ class ColorController extends Controller
     //Color endpoint method
     public function getColors(): JsonResponse {
         $colors = Color::all();
-
-        if($colors->count() > 0){
-           return $this->infoResponse(200, '', $colors);
-        }else{
-            return $this->infoResponse(404, 'No colors were found in the database...');
-        }
+        return $this->infoResponse(200, '', $colors);
     }
 
     public function addColor(Request $request): JsonResponse {
         $validator = Validator::make($request->all(), [
-           'name' => 'string|required',
-           'hex_code' => 'string|required'
+            'name' => 'string|required|unique:colors,name',
+            'hex_code' => 'string|required|unique:colors,name'
         ]);
-
-        $colors = Color::all();
-
-        foreach ($colors as $c){
-            if(($c->name == $request->name) || ($c->hex_code == $request->hex_code)){
-                return $this->infoResponse(422, 'The color already exists!');
-            }
-        }
 
         if($validator->fails()){
             return $this->infoResponse(422, $validator->messages());
@@ -51,24 +38,21 @@ class ColorController extends Controller
             ]);
         }
 
-        if($color){
-            return $this->infoResponse(200, 'Color added successfully!', $color);
-        }else {
-            return $this->infoResponse(500, 'Something went wrong!');
-        }
+        return $this->infoResponse(200, 'Color added successfully!', $color);
     }
 
-    public function updateColor($id, Request $request): JsonResponse
+    public function updateColor(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'string|required',
-            'hex_code' => 'string|required'
+            'id' => 'numeric|required|exists:colors,id',
+            'name' => 'string|required|unique:colors,name',
+            'hex_code' => 'string|required|unique:colors,hex_code'
         ]);
 
         if($validator->fails()){
             return $this->infoResponse(422, $validator->messages());
         }else{
-            $color = Color::find($id);
+            $color = Color::find($request->id);
 
             if(!$color){
                 return $this->infoResponse(404, 'No color was found in the database with the given id...');
@@ -80,11 +64,7 @@ class ColorController extends Controller
             ]);
         }
 
-        if($color){
-            return $this->infoResponse(200, 'Color updated successfully!', $color);
-        }else {
-            return $this->infoResponse(500, 'Something went wrong!');
-        }
+        return $this->infoResponse(200, 'Color updated successfully!', $color);
     }
 
     public function deleteColor($id): JsonResponse
