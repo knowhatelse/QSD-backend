@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BrandController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ColorController;
 use App\Http\Controllers\SizeController;
 use App\Http\Controllers\UserController;
@@ -24,23 +25,26 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::post('register',[AuthController::class,'register']);
+Route::post('login',[AuthController::class,'login']);
+Route::post('changePassword',[AuthController::class,'changePassword']);
+Route::post('logout',[AuthController::class,'logout']);
 
 //Color endpoint routes
 Route::get('color', [ColorController::class, 'getColors']);
 Route::post('color', [ColorController::class, 'addColor']);
-Route::put('color/{id}', [ColorController::class, 'updateColor']);
+Route::put('color', [ColorController::class, 'updateColor']);
 Route::delete('color/{id}', [ColorController::class, 'deleteColor']);
 
 //Brand endpoint routes
 Route::get('brand', [BrandController::class, 'getBrands']);
 Route::post('brand', [BrandController::class, 'addBrand']);
-Route::put('brand/{id}', [BrandController::class, 'updateBrand']);
+Route::put('brand', [BrandController::class, 'updateBrand']);
 Route::delete('brand/{id}', [BrandController::class, 'deleteBrand']);
 
 //Size endpoint routes
 Route::get('size', [SizeController::class, 'getSizes']);
 Route::post('size', [SizeController::class, 'addSize']);
-Route::put('size/{id}', [SizeController::class, 'updateSize']);
+Route::put('size', [SizeController::class, 'updateSize']);
 Route::delete('size/{id}', [SizeController::class, 'deleteSize']);
 
 //User endpoint routes
@@ -50,3 +54,14 @@ Route::put('user', [UserController::class, 'updateUser']);
 Route::put('user/{user_id}/update_role/{role_id}', [UserController::class, 'updateRole']);
 Route::put('user/{id}/ban_user', [UserController::class, 'banUser']);
 Route::delete('user/{id}', [UserController::class, 'deleteUser']);
+
+Route::put('user/{id}/update_user', [UserController::class, 'updateUser']);
+Route::put('user/{user_id}/update_role/{role_id}', [UserController::class, 'updateRole']);
+Route::put('user/{id}/ban_user', [UserController::class, 'banUser']);
+Route::delete('user/{id}', [UserController::class, 'deleteUser']);
+
+//Category endpoint
+Route::get('category', [CategoryController::class,'getCategories']);
+Route::post('category', [CategoryController::class,'addCategory']);
+Route::put('category/{id}', [CategoryController::class,'updateCategory']);
+Route::delete('category/{id}', [CategoryController::class,'deleteCategory']);

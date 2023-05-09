@@ -21,25 +21,13 @@ class SizeController extends Controller
     //Size endpoint methods
     public function getSizes(): JsonResponse {
         $sizes = Size::all();
-
-        if($sizes->count() > 0) {
-            return $this->infoResponse(200, '', $sizes);
-        }else{
-            return $this->infoResponse(404,'No sizes were found in the database...');
-        }
+        return $this->infoResponse(200, '', $sizes);
     }
 
     public function addSize(Request $request): JsonResponse {
         $validator = Validator::make($request->all(), [
-            'size' => 'string|required'
+            'size' => 'string|required|unique:sizes,size'
         ]);
-
-        $sizes = Size::all();
-        foreach ($sizes as $s){
-            if($s->size == $request->size){
-                return $this->infoResponse(422, 'The size already exists!');
-            }
-        }
 
         if($validator->fails()){
             return $this->infoResponse(422, $validator->messages());
@@ -49,22 +37,19 @@ class SizeController extends Controller
             ]);
         }
 
-        if($size){
-            return $this->infoResponse(200, 'Size added successfully!', $size);
-        }else {
-            return $this->infoResponse(500, 'Something went wrong!');
-        }
+        return $this->infoResponse(200, 'Size added successfully!', $size);
     }
 
-    public function updateSize($id, Request $request): JsonResponse {
+    public function updateSize(Request $request): JsonResponse {
         $validator = Validator::make($request->all(), [
-            'size' => 'string|required'
+            'id' => 'numeric|required|exists:sizes,id',
+            'size' => 'string|required|unique:sizes,size'
         ]);
 
         if($validator->fails()){
             return $this->infoResponse(422, $validator->messages());
         }else{
-            $size = Size::find($id);
+            $size = Size::find($request->id);
 
             if(!$size){
                 return $this->infoResponse(404, 'No size was found in the database with the given id...');
@@ -75,11 +60,7 @@ class SizeController extends Controller
             ]);
         }
 
-        if($size){
-            return $this->infoResponse(200, 'Size updated successfully!', $size);
-        } else {
-            return $this->infoResponse(500, 'Something went wrong!');
-        }
+        return $this->infoResponse(200, 'Size updated successfully!', $size);
     }
 
     public function deleteSize($id): JsonResponse {

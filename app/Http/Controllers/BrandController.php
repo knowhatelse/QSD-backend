@@ -6,6 +6,7 @@ use App\Models\Brand;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class BrandController extends Controller
 {
@@ -21,26 +22,13 @@ class BrandController extends Controller
     //Brand endpoint methods
     public function getBrands(): JsonResponse {
         $brands = Brand::all();
-
-        if($brands->count() > 0){
-            return $this->infoResponse(200, '', $brands);
-        }else{
-            return $this->infoResponse(404,'No brands were found in the database...');
-        }
+        return $this->infoResponse(200, '', $brands);
     }
 
     public function addBrand(Request $request): JsonResponse {
         $validator = Validator::make($request->all(), [
-           'name' => 'string|required'
+           'name' => 'string|required|unique:brands,name'
         ]);
-
-        $brands = Brand::all();
-
-        foreach ($brands as $b){
-            if($b->name == $request->name){
-                return $this->infoResponse(422,'The brand already exists!');
-            }
-        }
 
         if($validator->fails()){
             return $this->infoResponse(422,$validator->messages());
@@ -50,22 +38,19 @@ class BrandController extends Controller
             ]);
         }
 
-        if($brand){
-            return $this->infoResponse(200,'Brand added successfully!');
-        }else{
-            return $this->infoResponse(500,'Something went wrong!');
-        }
+        return $this->infoResponse(200,'Brand added successfully!');
     }
 
-    public function updateBrand($id, Request $request): JsonResponse {
+    public function updateBrand(Request $request): JsonResponse {
         $validator = Validator::make($request->all(), [
-            'name' => 'string|required'
+            'id' => 'numeric|required|exists:brands,id',
+            'name' => 'string|required|unique:brands,name'
         ]);
 
         if($validator->fails()){
             return $this->infoResponse(422,$validator->messages());
         }else{
-            $brand = Brand::find($id);
+            $brand = Brand::find($request->id);
 
             if(!$brand){
                 return $this->infoResponse(404, 'No brand was found in the database with the given id...');
@@ -75,11 +60,7 @@ class BrandController extends Controller
                 'name' => $request->name
             ]);
 
-            if($brand){
-                return $this->infoResponse(200,'Brand updated successfully!', $brand);
-            }else{
-                return $this->infoResponse(500,'Something went wrong!');
-            }
+            return $this->infoResponse(200, 'Brand updated successfully!', $brand);
         }
     }
 
