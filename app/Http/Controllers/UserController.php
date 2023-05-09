@@ -111,21 +111,18 @@ class UserController extends Controller
 
         if(!$user){
             return $this->infoResponse(404,'No user was found with the given id...');
-
-        }else{
-            if($user->role == 3){
-                return $this->infoResponse(403, "Super admin cannot be banned");
-            }
-
-            if($user->status == 0){
-                $this->banUnbanUser($user, 1);
-                return $this->infoResponse(200, 'The user was successfully unbanned!');
-
-            }else{
-                $this->banUnbanUser($user,0);
-                return $this->infoResponse(200, 'The user was successfully banned!');
-            }
         }
+
+        if($user->role == 3){
+            return $this->infoResponse(403, "Super admin cannot be banned");
+        }
+
+        if($user->status == 0){
+            $this->banUnbanUser($user, 1);
+            return $this->infoResponse(200, 'The user was successfully unbanned!');
+        }
+
+        return $this->infoResponse(200, 'The user was successfully banned!');
     }
 
     public function updateRole($user_id, $role_id): JsonResponse {
