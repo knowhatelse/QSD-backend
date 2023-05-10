@@ -69,4 +69,7 @@ class User extends Authenticatable
     public function rating(): HasMany {
         return $this->hasMany('App\Models\Rating');
     }
+    public function validationKeys(): HasMany {
+        return $this->hasMany(ValidationKey::class);
+    }
 }

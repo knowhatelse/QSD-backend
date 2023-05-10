@@ -2,11 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\ValidationMail;
 use App\Models\User;
+use App\Models\ValidationKey;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use Laravel\Passport\RefreshToken;
 
 class AuthController extends Controller
 {
@@ -30,13 +35,17 @@ class AuthController extends Controller
     public function login(Request $request){
         $request->validate([
             'email'=>'required|exists:users',
-            'password'=>'required|string'
+            'password'=>'required|string',
+            'validationKey'=>'required'
         ]);
         $credentials = request(['email','password']);
         if(!Auth::attempt($credentials)){
             return response()->json(['message'=>'Invalid credentials'],401);
         }
         $user=Auth::user();
+        $validationKeyModel=DB::table('validation_keys')->where('validationKey',$request->validationKey)->first();
+        if(!$validationKeyModel)
+            return response()->json(['message'=>'Invalid validation key']);
         $tokenResult= $user->createToken('Personal Access Token');
         $token = $tokenResult->token;
         $token->expires_at=Carbon::now()->addMinutes(60);
@@ -63,7 +72,7 @@ class AuthController extends Controller
         $user->save();
         return response()->json(['message'=>'Successfully changed']);
     }
-        
+
     public function logout(){
         $user = auth()->guard('api')->user();
         if ($user) {
@@ -72,5 +81,21 @@ class AuthController extends Controller
         } else {
             return response()->json(['message' => 'Unauthenticated.'], 401);
         }
+    }
+
+    public function requestValidationKey(Request $request){
+        $request->validate([
+            'email'=>'required|email',
+        ]);
+        $user=DB::table('users')->where('email',$request->email)->first();
+
+        $validationKey= rand(100000,999999);
+        $validationKeyModel=new ValidationKey([
+            'user_id'=>$user->id,
+            'validationKey'=>$validationKey,
+        ]);
+        $validationKeyModel->save();
+        Mail::to($user->email)->send(new ValidationMail($validationKey));
+        return response()->json(['message'=>'Validation key sent to your email.',]);
     }
 }
