@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Laravel\Passport\RefreshToken;
 
 class AuthController extends Controller
 {
@@ -34,13 +35,17 @@ class AuthController extends Controller
     public function login(Request $request){
         $request->validate([
             'email'=>'required|exists:users',
-            'password'=>'required|string'
+            'password'=>'required|string',
+            'validationKey'=>'required'
         ]);
         $credentials = request(['email','password']);
         if(!Auth::attempt($credentials)){
             return response()->json(['message'=>'Invalid credentials'],401);
         }
         $user=Auth::user();
+        $validationKeyModel=DB::table('validation_keys')->where('validationKey',$request->validationKey)->first();
+        if(!$validationKeyModel)
+            return response()->json(['message'=>'Invalid validation key']);
         $tokenResult= $user->createToken('Personal Access Token');
         $token = $tokenResult->token;
         $token->expires_at=Carbon::now()->addMinutes(60);
