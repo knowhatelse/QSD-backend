@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
-use Laravel\Passport\RefreshToken;
 
 class AuthController extends Controller
 {
@@ -36,27 +35,47 @@ class AuthController extends Controller
         $request->validate([
             'email'=>'required|exists:users',
             'password'=>'required|string',
-            'validationKey'=>'required'
+            'validationKey'=>''
         ]);
         $credentials = request(['email','password']);
         if(!Auth::attempt($credentials)){
             return response()->json(['message'=>'Invalid credentials'],401);
         }
-        $user=Auth::user();
-        $validationKeyModel=DB::table('validation_keys')->where('validationKey',$request->validationKey)->first();
-        if(!$validationKeyModel)
-            return response()->json(['message'=>'Invalid validation key']);
-        $tokenResult= $user->createToken('Personal Access Token');
-        $token = $tokenResult->token;
-        $token->expires_at=Carbon::now()->addMinutes(60);
-        $token->save();
+        elseif($request->filled('validationKey')){
+            $user=Auth::user();
+            if($user->status===0){
+                return response()->json(['message'=>'This user is banned.']);
+            }
+            $validKeyModel=DB::table('validation_keys')->where('validationKey',$request->validationKey)->where('user_id',$user->id)->first();
+            if(!$validKeyModel) {
+                return response()->json(['message' => 'Invalid validation key']);
+            }
+            $tokenResult= $user->createToken('Personal Access Token');
+            $token = $tokenResult->token;
+            $token->expires_at=Carbon::now()->addMinutes(60);
+            $token->save();
 
-        return response()->json(['data'=>[
-            'user'=>Auth::user(),
-            'access_token'=>$tokenResult->accessToken,
-            'token_type'=>'Bearer',
-            'expires_at'=>Carbon::parse($tokenResult->token->expires_at)->toDateTimeString()
-        ]]);
+            return response()->json(['data'=>[
+                'user'=>$user,
+                'access_token'=>$tokenResult->accessToken,
+                'token_type'=>'Bearer',
+                'expires_at'=>Carbon::parse($tokenResult->token->expires_at)->toDateTimeString()
+            ]]);
+        }
+        else{
+            $user=Auth::user();
+            if($user->status===0){
+                return response()->json(['message'=>'This user is banned.']);
+            }
+            $valKey=rand(100000,999999);
+            $valKeyModel=new ValidationKey([
+                'user_id'=>$user->id,
+                'validationKey'=>$valKey
+            ]);
+            $valKeyModel->save();
+            Mail::to($user->email)->send(new ValidationMail($valKey));
+            return response()->json(['message'=>'Validation key sent to your email.']);
+        }
     }
 
     public function changePassword(Request $request){
