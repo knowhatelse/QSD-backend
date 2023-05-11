@@ -88,7 +88,9 @@ class AuthController extends Controller
             'email'=>'required|email',
         ]);
         $user=DB::table('users')->where('email',$request->email)->first();
-
+        if($user->status===0){
+            return response()->json(['message'=>'This user is banned.']);
+        }
         $validationKey= rand(100000,999999);
         $validationKeyModel=new ValidationKey([
             'user_id'=>$user->id,
