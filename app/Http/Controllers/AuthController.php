@@ -41,11 +41,11 @@ class AuthController extends Controller
         if(!Auth::attempt($credentials)){
             return response()->json(['message'=>'Invalid credentials'],401);
         }
-        elseif($request->filled('validationKey')){
-            $user=Auth::user();
-            if($user->status===0){
-                return response()->json(['message'=>'This user is banned.']);
-            }
+        $user=Auth::user();
+        if($user->status===0){
+            return response()->json(['message'=>'This user is banned.']);
+        }
+        if($request->filled('validationKey')){
             $validKeyModel=DB::table('validation_keys')->where('validationKey',$request->validationKey)->where('user_id',$user->id)->first();
             if(!$validKeyModel) {
                 return response()->json(['message' => 'Invalid validation key']);
@@ -62,11 +62,7 @@ class AuthController extends Controller
                 'expires_at'=>Carbon::parse($tokenResult->token->expires_at)->toDateTimeString()
             ]]);
         }
-        else{
-            $user=Auth::user();
-            if($user->status===0){
-                return response()->json(['message'=>'This user is banned.']);
-            }
+
             $valKey=rand(100000,999999);
             $valKeyModel=new ValidationKey([
                 'user_id'=>$user->id,
@@ -75,7 +71,7 @@ class AuthController extends Controller
             $valKeyModel->save();
             Mail::to($user->email)->send(new ValidationMail($valKey));
             return response()->json(['message'=>'Validation key sent to your email.']);
-        }
+
     }
 
     public function changePassword(Request $request){
