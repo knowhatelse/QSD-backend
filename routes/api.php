@@ -57,7 +57,6 @@ Route::get('sizes', [SizeController::class, 'getSizes']);
 Route::middleware('adminSuperAdmin')->post('addSize', [SizeController::class, 'addSize']);
 Route::middleware('adminSuperAdmin')->put('updateSize', [SizeController::class, 'updateSize']);
 Route::middleware('adminSuperAdmin')->delete('deleteSize/{id}', [SizeController::class, 'deleteSize']);
-});
 
 //Category endpoint
 Route::get('categories', [CategoryController::class,'getCategories']);
