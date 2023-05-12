@@ -66,6 +66,7 @@ class Kernel extends HttpKernel
     ];
     protected $routeMiddleware = [
         'adminSuperAdmin'=>\App\Http\Middleware\IsAdminSuperAdmin::class,
+        'superAdmin'=>\App\Http\Middleware\isSuperAdmin::class,
     ];
 
 }

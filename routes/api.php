@@ -23,59 +23,43 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
-Route::group(['middleware'=>'adminSuperAdmin'],function () {
-    Route::post('color', [ColorController::class, 'addColor']);
-    Route::put('color', [ColorController::class, 'updateColor']);
-    Route::delete('color/{id}', [ColorController::class, 'deleteColor']);
 
-    Route::post('brand', [BrandController::class, 'addBrand']);
-    Route::put('brand', [BrandController::class, 'updateBrand']);
-    Route::delete('brand/{id}', [BrandController::class, 'deleteBrand']);
-
-    Route::post('size', [SizeController::class, 'addSize']);
-    Route::put('size', [SizeController::class, 'updateSize']);
-    Route::delete('size/{id}', [SizeController::class, 'deleteSize']);
-
-    Route::post('brand', [BrandController::class, 'addBrand']);
-    Route::put('brand', [BrandController::class, 'updateBrand']);
-    Route::delete('brand/{id}', [BrandController::class, 'deleteBrand']);
-
-    Route::post('category', [CategoryController::class,'addCategory']);
-    Route::put('category/{id}', [CategoryController::class,'updateCategory']);
-    Route::delete('category/{id}', [CategoryController::class,'deleteCategory']);
-
-
-
-});
+//Auth endpoint routes
 Route::post('register',[AuthController::class,'register']);
 Route::post('login',[AuthController::class,'login']);
-Route::post('changePassword',[AuthController::class,'changePassword']);
-Route::post('logout',[AuthController::class,'logout']);
-Route::post('requestValidationKey',[AuthController::class,'requestValidationKey']);
-
-//Color endpoint routes
-Route::get('color', [ColorController::class, 'getColors']);
-
-//Brand endpoint routes
-Route::get('brand', [BrandController::class, 'getBrands']);
-
-//Size endpoint routes
-Route::get('size', [SizeController::class, 'getSizes']);
-
+Route::middleware('auth:api')->post('changePassword',[AuthController::class,'changePassword']);
+Route::middleware('auth:api')->post('logout',[AuthController::class,'logout']);
 
 //User endpoint routes
-Route::get('user', [UserController::class, 'getUsers']);
-Route::get('user/{id}', [UserController::class, 'getUserById']);
-Route::put('user', [UserController::class, 'updateUser']);
-Route::put('user/{user_id}/update_role/{role_id}', [UserController::class, 'updateRole']);
-Route::put('user/{id}/ban_user', [UserController::class, 'banUser']);
-Route::delete('user/{id}', [UserController::class, 'deleteUser']);
+Route::middleware('auth:api')->get('user/{id}', [UserController::class, 'getUserById']);
+Route::group(['middleware'=>'superAdmin'],function() {
+    Route::get('users', [UserController::class, 'getUsers']);
+    Route::put('updateUser', [UserController::class, 'updateUser']);
+    Route::put('user/{user_id}/update_role/{role_id}', [UserController::class, 'updateRole']);
+    Route::put('user/{id}/ban_user', [UserController::class, 'banUser']);
+    Route::delete('user/{id}', [UserController::class, 'deleteUser']);
+});
 
-Route::put('user/{id}/update_user', [UserController::class, 'updateUser']);
-Route::put('user/{user_id}/update_role/{role_id}', [UserController::class, 'updateRole']);
-Route::put('user/{id}/ban_user', [UserController::class, 'banUser']);
-Route::delete('user/{id}', [UserController::class, 'deleteUser']);
+//Color endpoint routes
+Route::get('colors', [ColorController::class, 'getColors']);
+Route::middleware('adminSuperAdmin')->post('addColor', [ColorController::class, 'addColor']);
+Route::middleware('adminSuperAdmin')->put('updateColor', [ColorController::class, 'updateColor']);
+Route::middleware('adminSuperAdmin')->delete('deleteColor/{id}', [ColorController::class, 'deleteColor']);
+
+//Brand endpoint routes
+Route::get('brands', [BrandController::class, 'getBrands']);
+Route::middleware('adminSuperAdmin')->post('brands', [BrandController::class, 'addBrand']);
+Route::middleware('adminSuperAdmin')->put('updateBrand', [BrandController::class, 'updateBrand']);
+Route::middleware('adminSuperAdmin')->delete('deleteBrand/{id}', [BrandController::class, 'deleteBrand']);
+
+//Size endpoint routes
+Route::get('sizes', [SizeController::class, 'getSizes']);
+Route::middleware('adminSuperAdmin')->post('addSize', [SizeController::class, 'addSize']);
+Route::middleware('adminSuperAdmin')->put('updateSize', [SizeController::class, 'updateSize']);
+Route::middleware('adminSuperAdmin')->delete('deleteSize/{id}', [SizeController::class, 'deleteSize']);
 
 //Category endpoint
-Route::get('category', [CategoryController::class,'getCategories']);
-
+Route::get('categories', [CategoryController::class,'getCategories']);
+Route::middleware('adminSuperAdmin')->post('addCategory', [CategoryController::class,'addCategory']);
+Route::middleware('adminSuperAdmin')->put('updateCategory/{id}', [CategoryController::class,'updateCategory']);
+Route::middleware('adminSuperAdmin')->delete('deleteCategory/{id}', [CategoryController::class,'deleteCategory']);
