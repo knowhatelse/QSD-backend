@@ -28,6 +28,7 @@ Route::post('register',[AuthController::class,'register']);
 Route::post('login',[AuthController::class,'login']);
 Route::post('changePassword',[AuthController::class,'changePassword']);
 Route::post('logout',[AuthController::class,'logout']);
+Route::middleware('auth:api')->post('refresh',[AuthController::class,'refresh']);
 
 //Color endpoint routes
 Route::get('color', [ColorController::class, 'getColors']);

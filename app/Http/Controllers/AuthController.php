@@ -63,7 +63,7 @@ class AuthController extends Controller
         $user->save();
         return response()->json(['message'=>'Successfully changed']);
     }
-        
+
     public function logout(){
         $user = auth()->guard('api')->user();
         if ($user) {
@@ -73,4 +73,17 @@ class AuthController extends Controller
             return response()->json(['message' => 'Unauthenticated.'], 401);
         }
     }
+
+    public function refresh(Request $request){
+        $user=auth()->guard('api')->user();
+        $newToken = $user->createToken('Personal Access Token');
+        $token = $newToken->token;
+        $token->expires_at=Carbon::now()->addMinutes(60);
+        $token->save();
+        return response()->json(['user' => ['user' => $user],
+            'authorization' => [
+                'token' => $newToken->accessToken,
+                'type' => 'Bearer',]]);
+    }
+
 }
