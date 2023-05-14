@@ -19,7 +19,7 @@ class AuthController extends Controller
             'first_name'=>'required|string',
             'last_name'=>'required|string',
             'email'=>'required|string|unique:users',
-            'password'=>'required|string|min:6'
+            'password'=>'required|string|min:8|regex:/[A-Z]/|regex:/[a-z]/|regex:/[0-9]/|regex:/[@$!%*#?&.]/'
         ]);
         $user = new User([
             'first_name'=>$request->first_name,
@@ -128,4 +128,25 @@ class AuthController extends Controller
         return response()->json(['message'=>'Validation key sent to your email.',]);
     }
 
+    public function resetPassword(Request $request){
+        $request->validate([
+            'email'=>'required|exists:users',
+            'password'=>'required|string|min:8|regex:/[A-Z]/|regex:/[a-z]/|regex:/[0-9]/|regex:/[@$!%*#?&.]/|confirmed',
+            'key'=>'required',
+        ]);
+        $user=User::where('email',$request->email)->first();
+        if(!$user) {
+            return response()->json(['message' => 'Invalid email'],404);
+        }
+        if($user->status===0) {
+            return response()->json(['message' => 'This user is banned.']);
+        }
+        $valKeyModel=DB::table('validation_keys')->where('user_id',$user->id)->where('validationKey',$request->key)->first();
+        if(!$valKeyModel) {
+            return response()->json(['message' => 'Invalid validation key']);
+        }
+        $user->password=Hash::make($request->password);
+        $user->save();
+        return response()->json(['message'=>'Password reset successfully'],200);
+    }
 }
