@@ -29,6 +29,7 @@ Route::post('register',[AuthController::class,'register']);
 Route::post('login',[AuthController::class,'login']);
 Route::post('requestValidationKey',[AuthController::class,'requestValidationKey']);
 Route::post('resetPassword',[AuthController::class,'resetPassword']);
+Route::middleware('auth:api')->post('refresh',[AuthController::class,'refresh']);
 Route::middleware('auth:api')->post('changePassword',[AuthController::class,'changePassword']);
 Route::middleware('auth:api')->post('logout',[AuthController::class,'logout']);
 

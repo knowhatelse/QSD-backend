@@ -98,6 +98,18 @@ class AuthController extends Controller
         }
     }
 
+    public function refresh(Request $request){
+        $user=auth()->guard('api')->user();
+        $newToken = $user->createToken('Personal Access Token');
+        $token = $newToken->token;
+        $token->expires_at=Carbon::now()->addMinutes(60);
+        $token->save();
+        return response()->json(['user' => ['user' => $user],
+            'authorization' => [
+                'token' => $newToken->accessToken,
+                'type' => 'Bearer',]]);
+    }
+
     public function requestValidationKey(Request $request){
         $request->validate([
             'email'=>'required|email',
@@ -115,6 +127,7 @@ class AuthController extends Controller
         Mail::to($user->email)->send(new ValidationMail($validationKey));
         return response()->json(['message'=>'Validation key sent to your email.',]);
     }
+
     public function resetPassword(Request $request){
         $request->validate([
             'email'=>'required|exists:users',
