@@ -19,7 +19,7 @@ class AuthController extends Controller
             'first_name'=>'required|string',
             'last_name'=>'required|string',
             'email'=>'required|string|unique:users',
-            'password'=>'required|string|min:6'
+            'password'=>'required|string|min:8|regex:/[A-Z]/|regex:/[a-z]/|regex:/[0-9]/|regex:/[@$!%*#?&.]/'
         ]);
         $user = new User([
             'first_name'=>$request->first_name,
