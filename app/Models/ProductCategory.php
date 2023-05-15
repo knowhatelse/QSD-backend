@@ -17,11 +17,16 @@ class ProductCategory extends Model
      */
     protected $table = 'product_categories';
 
+    protected $fillable = [
+        'product_id',
+        'category_id',
+    ];
+
     public function product(): HasMany {
         return $this->hasMany('App\Models\Product');
     }
 
-    public function category(): HasMany {
+    public function categories(): HasMany {
         return $this->hasMany('App\Models\Category');
     }
 }
