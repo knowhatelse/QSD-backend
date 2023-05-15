@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ColorController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SizeController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
@@ -65,3 +66,8 @@ Route::get('category', [CategoryController::class,'getCategories']);
 Route::post('category', [CategoryController::class,'addCategory']);
 Route::put('category/{id}', [CategoryController::class,'updateCategory']);
 Route::delete('category/{id}', [CategoryController::class,'deleteCategory']);
+
+//Product endpoint
+Route::get('products', [ProductController::class, 'getProducts']);
+Route::get('getProduct/{id}', [ProductController::class, 'getProductById']);
+Route::post('addProduct', [ProductController::class, 'addProduct']);
