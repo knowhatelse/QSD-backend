@@ -71,4 +71,4 @@ Route::middleware('adminSuperAdmin')->delete('deleteCategory/{id}', [CategoryCon
 //Product endpoint
 Route::get('products', [ProductController::class, 'getProducts']);
 Route::get('getProduct/{id}', [ProductController::class, 'getProductById']);
-Route::post('addProduct', [ProductController::class, 'addProduct']);
+Route::middleware('adminSuperAdmin')->put('addProduct', [ProductController::class, 'addProduct']);
