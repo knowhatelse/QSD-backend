@@ -38,9 +38,9 @@ Route::middleware('auth:api')->get('user/{id}', [UserController::class, 'getUser
 Route::group(['middleware'=>'superAdmin'],function() {
     Route::get('users', [UserController::class, 'getUsers']);
     Route::put('updateUser', [UserController::class, 'updateUser']);
-    Route::put('user/{user_id}/update_role/{role_id}', [UserController::class, 'updateRole']);
-    Route::put('user/{id}/ban_user', [UserController::class, 'banUser']);
-    Route::delete('user/{id}', [UserController::class, 'deleteUser']);
+    Route::put('updateRole', [UserController::class, 'updateRole']);
+    Route::put('banUser/{id}', [UserController::class, 'banUser']);
+    Route::delete('deleteUser/{id}', [UserController::class, 'deleteUser']);
 });
 
 //Color endpoint routes
