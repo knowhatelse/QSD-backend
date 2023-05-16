@@ -32,16 +32,18 @@ class Product extends Model
         'color_id',
     ];
 
-    public function productSizes(): BelongsTo {
-        return $this->belongsTo('App\Models\ProductSize');
+
+
+    public function productSizes(): BelongsToMany {
+        return $this->belongsToMany(ProductSize::class, 'product_sizes');
     }
 
-    public function brands(): HasOne {
-        return $this->hasOne(Brand::class, 'id', 'brand_id');
+    public function brands(): BelongsTo {
+        return $this->belongsTo(Brand::class, 'id', 'brand_id');
     }
 
-    public function colors(): HasOne {
-        return $this->hasOne(Color::class, 'id', 'color_id');
+    public function colors(): BelongsTo {
+        return $this->belongsTo(Color::class, 'id', 'color_id');
     }
 
     public function rating(): HasMany {
