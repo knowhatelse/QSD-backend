@@ -34,6 +34,7 @@ Route::post('search',[SearchController::class,'search']);
 Route::middleware('auth:api')->post('refresh',[AuthController::class,'refresh']);
 Route::middleware('auth:api')->post('changePassword',[AuthController::class,'changePassword']);
 Route::middleware('auth:api')->post('logout',[AuthController::class,'logout']);
+Route::get('filterProducts',[\App\Http\Controllers\FilterController::class,'filterProducts']);
 
 //User endpoint routes
 Route::middleware('auth:api')->get('user/{id}', [UserController::class, 'getUserById']);
