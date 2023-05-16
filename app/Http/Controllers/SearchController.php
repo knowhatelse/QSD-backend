@@ -33,7 +33,7 @@ class SearchController extends Controller
                         $subquery->select('id')->from('sizes')->where('size', 'LIKE', "%$name%");
                     });
                 });
-            })->with('categories')->with('colors')->with('brands')->with('sizes')->get();
+            })->with('categories','colors','brands','sizes')->get();
 
             return response()->json($results);
         }
