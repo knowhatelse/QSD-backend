@@ -39,11 +39,11 @@ class Product extends Model
     }
 
     public function brands(): BelongsTo {
-        return $this->belongsTo(Brand::class, 'id', 'brand_id');
+        return $this->belongsTo(Brand::class, 'brand_id', 'id');
     }
 
     public function colors(): BelongsTo {
-        return $this->belongsTo(Color::class, 'id', 'color_id');
+        return $this->belongsTo(Color::class, 'color_id', 'id');
     }
 
     public function rating(): HasMany {
