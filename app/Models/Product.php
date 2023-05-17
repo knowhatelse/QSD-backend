@@ -31,12 +31,10 @@ class Product extends Model
         'brand_id',
         'color_id',
     ];
-  
-    public function productSize(): BelongsTo {
-        return $this->belongsTo('App\Models\ProdutcSize');
 
     public function productSizes(): BelongsToMany {
         return $this->belongsToMany(ProductSize::class, 'product_sizes');
+    }
 
     public function brands(): BelongsTo {
         return $this->belongsTo(Brand::class, 'brand_id', 'id');
