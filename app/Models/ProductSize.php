@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class ProdutcSize extends Model
+class ProductSize extends Model
 {
     use HasFactory;
 
@@ -19,7 +19,9 @@ class ProdutcSize extends Model
     protected $table = 'product_sizes';
 
     protected $fillable = [
-        'amount'
+        'amount',
+        'product_id',
+        'size_id'
     ];
 
     public function product(): HasMany {

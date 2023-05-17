@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
@@ -26,19 +27,23 @@ class Product extends Model
         'total_rating',
         'average_rating',
         'is_favorite',
-        'gender'
+        'gender',
+        'brand_id',
+        'color_id',
     ];
 
-    public function productSize(): BelongsTo {
-        return $this->belongsTo('App\Models\ProdutcSize');
+
+
+    public function productSizes(): BelongsToMany {
+        return $this->belongsToMany(ProductSize::class, 'product_sizes');
     }
 
-    public function brand(): HasOne {
-        return $this->hasOne('App\Models\Brand');
+    public function brands(): BelongsTo {
+        return $this->belongsTo(Brand::class, 'brand_id', 'id');
     }
 
-    public function color(): HasOne {
-        return $this->hasOne('App\Models\Color');
+    public function colors(): BelongsTo {
+        return $this->belongsTo(Color::class, 'color_id', 'id');
     }
 
     public function rating(): HasMany {
@@ -53,7 +58,16 @@ class Product extends Model
         return $this->hasMany('App\Models\Image');
     }
 
-    public function productCategory(): BelongsTo {
+    public function productCategories(): BelongsTo {
         return $this->belongsTo('App\Models\ProductCategory');
     }
+
+    public function categories(): BelongsToMany {
+        return $this->belongsToMany(Category::class, 'product_categories');
+    }
+
+    public function sizes(): BelongsToMany {
+        return $this->belongsToMany(Size::class, 'product_sizes');
+    }
+
 }

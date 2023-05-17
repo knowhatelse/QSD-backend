@@ -20,9 +20,9 @@ return new class extends Migration
             $table->boolean('is_favorite')->default(0); //Da li da se i ovdje stavi default vrijednost na false?
             $table->enum('gender', [1,2,3])->comment('1 - male, 2 - female, 3 - child')->default('1');
             $table->unsignedBigInteger('brand_id');
-            $table->foreignId('brand_id')->references('id')->on('brands')->onDelete('cascade');
+            $table->foreign('brand_id')->references('id')->on('brands')->onDelete('cascade');
             $table->unsignedBigInteger('color_id');
-            $table->foreignId('color_id')->references('id')->on('colors')->onDelete('cascade');
+            $table->foreign('color_id')->references('id')->on('colors')->onDelete('cascade');
             $table->timestamps();
         });
     }
