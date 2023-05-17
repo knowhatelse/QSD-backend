@@ -5,6 +5,7 @@ use App\Http\Controllers\BrandController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ColorController;
 use App\Http\Controllers\FavoriteController;
+use App\Http\Controllers\SearchController;
 use App\Http\Controllers\SizeController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
@@ -30,19 +31,21 @@ Route::post('register',[AuthController::class,'register']);
 Route::post('login',[AuthController::class,'login']);
 Route::post('requestValidationKey',[AuthController::class,'requestValidationKey']);
 Route::post('resetPassword',[AuthController::class,'resetPassword']);
+Route::post('search',[SearchController::class,'search']);
 Route::middleware('auth:api')->post('refresh',[AuthController::class,'refresh']);
 Route::middleware('auth:api')->post('changePassword',[AuthController::class,'changePassword']);
 Route::middleware('auth:api')->post('logout',[AuthController::class,'logout']);
 Route::middleware('auth:api')->get('getFavorites',[FavoriteController::class,'getFavorites']);
+Route::get('filterProducts',[\App\Http\Controllers\FilterController::class,'filterProducts']);
 
 //User endpoint routes
 Route::middleware('auth:api')->get('user/{id}', [UserController::class, 'getUserById']);
 Route::group(['middleware'=>'superAdmin'],function() {
     Route::get('users', [UserController::class, 'getUsers']);
     Route::put('updateUser', [UserController::class, 'updateUser']);
-    Route::put('user/{user_id}/update_role/{role_id}', [UserController::class, 'updateRole']);
-    Route::put('user/{id}/ban_user', [UserController::class, 'banUser']);
-    Route::delete('user/{id}', [UserController::class, 'deleteUser']);
+    Route::put('updateRole', [UserController::class, 'updateRole']);
+    Route::put('banUser/{id}', [UserController::class, 'banUser']);
+    Route::delete('deleteUser/{id}', [UserController::class, 'deleteUser']);
 });
 
 //Color endpoint routes

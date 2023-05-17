@@ -29,6 +29,21 @@ class Product extends Model
         'gender'
     ];
 
+    public function categories()
+    {
+        return $this->belongsToMany(Category::class, 'product_categories');
+    }
+    public function colors()
+    {
+        return $this->belongsTo(Color::class, 'color_id');
+    }
+    public function brands()
+    {
+        return $this->belongsTo(Brand::class,'brand_id');
+    }
+    public function sizes(){
+        return $this->belongsToMany(Size::class,'product_sizes');
+    }
     public function productSize(): BelongsTo {
         return $this->belongsTo('App\Models\ProdutcSize');
     }
