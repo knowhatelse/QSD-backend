@@ -5,6 +5,7 @@ use App\Http\Controllers\BrandController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ColorController;
 use App\Http\Controllers\SearchController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SizeController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
@@ -69,3 +70,8 @@ Route::get('categories', [CategoryController::class,'getCategories']);
 Route::middleware('adminSuperAdmin')->post('addCategory', [CategoryController::class,'addCategory']);
 Route::middleware('adminSuperAdmin')->put('updateCategory/{id}', [CategoryController::class,'updateCategory']);
 Route::middleware('adminSuperAdmin')->delete('deleteCategory/{id}', [CategoryController::class,'deleteCategory']);
+
+//Product endpoint
+Route::get('products', [ProductController::class, 'getProducts']);
+Route::get('getProduct/{id}', [ProductController::class, 'getProductById']);
+Route::middleware('adminSuperAdmin')->post('addProduct', [ProductController::class, 'addProduct']);

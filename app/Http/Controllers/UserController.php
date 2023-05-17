@@ -122,6 +122,7 @@ class UserController extends Controller
             return $this->infoResponse(200, 'The user was successfully unbanned!');
         }
 
+        $this->banUnbanUser($user,0);
         return $this->infoResponse(200, 'The user was successfully banned!');
     }
 
