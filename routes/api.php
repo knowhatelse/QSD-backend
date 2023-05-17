@@ -77,3 +77,5 @@ Route::middleware('adminSuperAdmin')->delete('deleteCategory/{id}', [CategoryCon
 Route::get('products', [ProductController::class, 'getProducts']);
 Route::get('getProduct/{id}', [ProductController::class, 'getProductById']);
 Route::middleware('adminSuperAdmin')->post('addProduct', [ProductController::class, 'addProduct']);
+Route::middleware('adminSuperAdmin')->put('updateProduct', [ProductController::class, 'updateProduct']);
+Route::middleware('adminSuperAdmin')->delete('deleteProduct/{id}', [ProductController::class, 'deleteProduct']);
