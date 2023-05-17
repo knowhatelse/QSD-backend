@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ColorController;
+use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SizeController;
@@ -35,6 +36,7 @@ Route::post('search',[SearchController::class,'search']);
 Route::middleware('auth:api')->post('refresh',[AuthController::class,'refresh']);
 Route::middleware('auth:api')->post('changePassword',[AuthController::class,'changePassword']);
 Route::middleware('auth:api')->post('logout',[AuthController::class,'logout']);
+Route::middleware('auth:api')->post('handleFavorite',[FavoriteController::class,'handleFavorite']);
 Route::get('filterProducts',[\App\Http\Controllers\FilterController::class,'filterProducts']);
 
 //User endpoint routes
