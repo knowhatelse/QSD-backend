@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
@@ -75,7 +76,7 @@ class UserController extends Controller
             'id' =>'numeric|required|exists:users,id',
             'first_name' => 'string|required',
             'last_name' => 'string|required',
-            'email' => 'string|required|unique:users,email',
+            'email' => ['required',Rule::unique('users')->ignore($request->id),'string'],
             'phone' => 'string',
             'city' => 'string',
             'address' => 'string',
@@ -125,16 +126,17 @@ class UserController extends Controller
         return $this->infoResponse(200, 'The user was successfully banned!');
     }
 
-    public function updateRole($user_id, $role_id): JsonResponse {
-        $validator = Validator::make(['role' => $role_id], [
-            'role' => 'integer|required|in:1,2,3'
+    public function updateRole(Request $request): JsonResponse {
+        $validator = Validator::make($request->all(), [
+            'user_id' => 'integer|required|exists:users,id',
+            'role_id' => 'integer|required|in:1,2,3'
         ]);
 
         if($validator->fails()){
             return $this->infoResponse(422, $validator->messages());
         }
 
-        $user = User::find($user_id);
+        $user = User::find($request->user_id);
 
         if(!$user){
             return $this->infoResponse(404, 'No user was found with the given id...');
@@ -147,7 +149,7 @@ class UserController extends Controller
         }
 
         $user->update([
-            'role' => $role_id
+            'role' => $request->role_id
         ]);
 
         return $this->infoResponse(200, 'Role was successfully updated');
