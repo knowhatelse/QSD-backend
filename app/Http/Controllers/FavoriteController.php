@@ -11,15 +11,11 @@ class FavoriteController extends Controller
 {
     public function handleFavorite(Request $request){
         $request->validate([
-            'product_id'=>'required',
+            'product_id'=>'required|exists:products,id',
         ]);
         $user=Auth::user();
         $product_id=$request->product_id;
-
         $product=Product::find($product_id);
-        if(!$product){
-            return response()->json(['message'=>'The selected product id is invalid.']);
-        }
         $existingFavorite = Favorite::where('user_id',$user->id)->where('product_id',$product_id)->first();
         if($existingFavorite){
             $existingFavorite->delete();
