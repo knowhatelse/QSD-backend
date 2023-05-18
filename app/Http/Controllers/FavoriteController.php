@@ -32,4 +32,9 @@ class FavoriteController extends Controller
         return response()->json(['message'=>'Favorite added successfully']);
 
     }
+    public function getFavorites(){
+        $user = Auth::user();
+        $favorites=Favorite::with('products')->where('user_id',$user->id)->get();
+        return response()->json([$favorites]);
+    }
 }
