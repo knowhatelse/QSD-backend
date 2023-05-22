@@ -52,7 +52,7 @@ class Product extends Model
         return $this->hasMany('App\Models\Favorite');
     }
 
-    public function image(): HasMany {
+    public function images(): HasMany {
         return $this->hasMany('App\Models\Image');
     }
 
