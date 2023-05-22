@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Image;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class ImageController extends Controller
@@ -21,15 +20,15 @@ class ImageController extends Controller
         ]);
 
         if($validator->fails()){
-            return $this->infoResponse(422, $validator->messages());
+            return $this->infoResponse(404, $validator->messages());
         }
 
-        $image = Image::find($id);
+        $image = Image::findOrFail($id);
         $product_id = $image->product_id;
-        $numberOfImages = $image::where('product_id',$product_id)->count();
+        $numberOfImages = Image::where('product_id',$product_id)->count();
 
         if($numberOfImages == 1){
-            return $this->infoResponse(403, 'You can not delete the last image.');
+            return $this->infoResponse(403, 'You cannot delete the last image.');
         }
 
         $image->delete();

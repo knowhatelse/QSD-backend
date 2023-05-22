@@ -61,6 +61,7 @@ Route::middleware('adminSuperAdmin')->delete('deleteColor/{id}', [ColorControlle
 Route::get('brands', [BrandController::class, 'getBrands']);
 Route::middleware('adminSuperAdmin')->post('brands', [BrandController::class, 'addBrand']);
 Route::middleware('adminSuperAdmin')->put('updateBrand', [BrandController::class, 'updateBrand']);
+Route::middleware('adminSuperAdmin')->put('updateBrand', [BrandController::class, 'updateBrand']);
 Route::middleware('adminSuperAdmin')->delete('deleteBrand/{id}', [BrandController::class, 'deleteBrand']);
 
 //Size endpoint routes
@@ -79,8 +80,8 @@ Route::middleware('adminSuperAdmin')->delete('deleteCategory/{id}', [CategoryCon
 Route::get('products', [ProductController::class, 'getProducts']);
 Route::get('getProduct/{id}', [ProductController::class, 'getProductById']);
 Route::middleware('adminSuperAdmin')->post('addProduct', [ProductController::class, 'addProduct']);
-Route::middleware('adminSuperAdmin')->put('updateProduct', [ProductController::class, 'updateProduct']);
+Route::middleware('adminSuperAdmin')->post('updateProduct', [ProductController::class, 'updateProduct']);
 Route::middleware('adminSuperAdmin')->delete('deleteProduct/{id}', [ProductController::class, 'deleteProduct']);
 
 //Image endpoint routes
-Route::delete('deleteImage/{id}', [ImageController::class, 'deleteImage']);
+Route::middleware('adminSuperAdmin')->delete('deleteImage/{id}', [ImageController::class, 'deleteImage']);
