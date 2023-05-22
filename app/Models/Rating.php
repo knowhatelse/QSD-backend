@@ -18,7 +18,9 @@ class Rating extends Model
     protected $table = 'ratings';
 
     protected $fillable = [
-        'number'
+        'number',
+        'product_id',
+        'user_id'
     ];
 
     public function product(): BelongsTo {

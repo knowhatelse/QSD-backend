@@ -5,6 +5,7 @@ use App\Http\Controllers\BrandController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ColorController;
 use App\Http\Controllers\FavoriteController;
+use App\Http\Controllers\RatingController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SizeController;
@@ -80,3 +81,6 @@ Route::get('getProduct/{id}', [ProductController::class, 'getProductById']);
 Route::middleware('adminSuperAdmin')->post('addProduct', [ProductController::class, 'addProduct']);
 Route::middleware('adminSuperAdmin')->put('updateProduct', [ProductController::class, 'updateProduct']);
 Route::middleware('adminSuperAdmin')->delete('deleteProduct/{id}', [ProductController::class, 'deleteProduct']);
+
+//Rating endpoint
+Route::post('rateProduct', [RatingController::class, 'rateProduct']);
