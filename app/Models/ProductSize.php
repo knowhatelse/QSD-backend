@@ -32,7 +32,13 @@ class ProductSize extends Model
         return $this->hasMany('App\Models\Size');
     }
 
-    public function orderProductSize(): BelongsTo {
-        return $this->belongsTo('App\Models\OrderProductSize');
+    public function products()
+    {
+        return $this->belongsTo(Product::class,'product_id');
+    }
+
+    public function sizes()
+    {
+        return $this->belongsTo(Size::class,'size_id');
     }
 }
