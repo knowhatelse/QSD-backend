@@ -73,7 +73,7 @@ class OrderController extends Controller
         }
         $paymentIntent->confirm(['payment_method'=>$request->payment_method],['stripe_account'=>$connectedAccountId]);
         Mail::to($user->email)->send(new PaymentSuccessfull($order));
-        return response()->json(['message' => 'Order created successfully.', 'order' => $order->load('user','orderProductSizes.product.product','orderProductSizes.size')]);
+        return response()->json(['message' => 'Order created successfully.', 'order' => $order]);
 
 
     }
