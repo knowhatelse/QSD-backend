@@ -5,6 +5,8 @@ use App\Http\Controllers\BrandController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ColorController;
 use App\Http\Controllers\FavoriteController;
+
+use App\Http\Controllers\RatingController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ProductController;
@@ -85,3 +87,6 @@ Route::middleware('adminSuperAdmin')->delete('deleteProduct/{id}', [ProductContr
 
 //Image endpoint routes
 Route::middleware('adminSuperAdmin')->delete('deleteImage/{id}', [ImageController::class, 'deleteImage']);
+
+//Rating endpoint
+Route::middleware('auth:api')->post('rateProduct', [RatingController::class, 'rateProduct']);
