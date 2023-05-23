@@ -43,9 +43,9 @@ Route::get('filterProducts',[\App\Http\Controllers\FilterController::class,'filt
 
 //User endpoint routes
 Route::middleware('auth:api')->get('user/{id}', [UserController::class, 'getUserById']);
+Route::middleware('auth:api')->put('updateUser', [UserController::class, 'updateUser']);
 Route::group(['middleware'=>'superAdmin'],function() {
     Route::get('users', [UserController::class, 'getUsers']);
-    Route::put('updateUser', [UserController::class, 'updateUser']);
     Route::put('updateRole', [UserController::class, 'updateRole']);
     Route::put('banUser/{id}', [UserController::class, 'banUser']);
     Route::delete('deleteUser/{id}', [UserController::class, 'deleteUser']);
