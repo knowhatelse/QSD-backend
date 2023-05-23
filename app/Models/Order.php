@@ -22,14 +22,24 @@ class Order extends Model
         'address',
         'city',
         'zip_code',
-        'phone'
+        'phone',
+        'transaction_id',
+        'user_id'
     ];
 
-    public function user(): BelongsTo {
+    public function user(): BelongsTo
+    {
         return $this->belongsTo('App\Models\User');
     }
 
-    public function orderProductSize(): BelongsTo {
+    public function orderProductSize(): BelongsTo
+    {
         return $this->belongsTo('App\Models\OrderProductSize');
     }
+
+    public function orderProductSizes()
+    {
+        return $this->hasMany(OrderProductSize::class);
+    }
+
 }
