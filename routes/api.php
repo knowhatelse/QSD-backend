@@ -89,4 +89,4 @@ Route::middleware('adminSuperAdmin')->delete('deleteProduct/{id}', [ProductContr
 Route::middleware('adminSuperAdmin')->delete('deleteImage/{id}', [ImageController::class, 'deleteImage']);
 
 //Rating endpoint
-Route::post('rateProduct', [RatingController::class, 'rateProduct']);
+Route::middleware('auth:api')->post('rateProduct', [RatingController::class, 'rateProduct']);
