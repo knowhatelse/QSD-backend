@@ -43,12 +43,12 @@ class AuthController extends Controller
         }
         $user=Auth::user();
         if($user->status===0){
-            return response()->json(['message'=>'This user is banned.']);
+            return response()->json(['message'=>'This user is banned.'],403);
         }
         if($request->filled('validationKey')){
             $validKeyModel=DB::table('validation_keys')->where('validationKey',$request->validationKey)->where('user_id',$user->id)->first();
             if(!$validKeyModel) {
-                return response()->json(['message' => 'Invalid validation key']);
+                return response()->json(['message' => 'Invalid validation key'],400);
             }
             $tokenResult= $user->createToken('Personal Access Token');
             $token = $tokenResult->token;
@@ -81,7 +81,7 @@ class AuthController extends Controller
         ]);
         $user=auth()->guard('api')->user();
         if(!Hash::check($request->old_password, $user->password)){
-            return response()->json(['message'=>'Wrong old password']);
+            return response()->json(['message'=>'Wrong old password'],403);
         }
         $user->password=Hash::make($request->new_password);
         $user->save();
@@ -116,7 +116,7 @@ class AuthController extends Controller
         ]);
         $user=DB::table('users')->where('email',$request->email)->first();
         if($user->status===0){
-            return response()->json(['message'=>'This user is banned.']);
+            return response()->json(['message'=>'This user is banned.'],403);
         }
         $validationKey= rand(100000,999999);
         $validationKeyModel=new ValidationKey([
@@ -139,11 +139,11 @@ class AuthController extends Controller
             return response()->json(['message' => 'Invalid email'],404);
         }
         if($user->status===0) {
-            return response()->json(['message' => 'This user is banned.']);
+            return response()->json(['message' => 'This user is banned.'],403);
         }
         $valKeyModel=DB::table('validation_keys')->where('user_id',$user->id)->where('validationKey',$request->key)->first();
         if(!$valKeyModel) {
-            return response()->json(['message' => 'Invalid validation key']);
+            return response()->json(['message' => 'Invalid validation key'],400);
         }
         $user->password=Hash::make($request->password);
         $user->save();
