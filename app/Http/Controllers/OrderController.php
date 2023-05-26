@@ -8,15 +8,24 @@ use App\Models\OrderProductSize;
 use App\Models\Product;
 use App\Models\ProductSize;
 use http\Env\Response;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Validator;
 use Psy\Util\Str;
 use Stripe\Stripe;
 use Stripe\PaymentIntent;
 
 class OrderController extends Controller
 {
+    private function infoResponse($status, $message, $record = null): JsonResponse {
+        return response()->json([
+            'message' => $message,
+            'data' => $record
+        ],$status);
+    }
+
     public function payment(Request $request){
         $request->validate([
             'payment_method'=>'required|string',
@@ -77,4 +86,42 @@ class OrderController extends Controller
 
 
     }
+
+    private function orders($user_id = null): JsonResponse {
+        $query = Order::with('user', 'orderProductSizes.productSizes.products');
+
+        if ($user_id) {
+            $query->where('user_id', $user_id);
+        }
+
+        $orders = $query->get();
+
+        $modifiedOrders = $orders->map(function ($order) {
+            $products = $order->orderProductSizes->map(function ($orderProductSize) {
+                return $orderProductSize->productSizes->products;
+            });
+
+            return $order->only(['id', 'total', 'address', 'city', 'zip_code', 'phone', 'transaction_id', 'user_id', 'created_at', 'updated_at', 'user'])
+                + ['products' => $products];
+        });
+
+        return $this->infoResponse(200, '', $modifiedOrders);
+    }
+
+    public function getOrders(): JsonResponse {
+        return $this->orders();
+    }
+
+    public function getOrdersPerUser(Request $request): JsonResponse {
+        $validator = Validator::make($request->all(),[
+            'user_id' => 'integer|required|exists:users,id'
+        ]);
+
+        if($validator->fails()){
+            return $this->infoResponse(404, $validator->messages());
+        }
+
+        return $this->orders($request->user_id);
+    }
+
 }
