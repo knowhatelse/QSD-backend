@@ -101,4 +101,4 @@ Route::middleware('auth:api')->post('rateProduct', [RatingController::class, 'ra
 
 //Orders endpoint routes
 Route::middleware('adminSuperAdmin')->get('getOrders', [OrderController::class, 'getOrders']);
-Route::get('getOrdersPerUser', [OrderController::class, 'getOrdersPerUser']);
+Route::middleware('auth:api')->get('getOrdersPerUser', [OrderController::class, 'getOrdersPerUser']);
