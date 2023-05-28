@@ -12,10 +12,13 @@ class UserController extends Controller
 {
     //Helpers function
     private function infoResponse($status, $message, $record = null): JsonResponse {
-        return response()->json([
-            'message' => $message,
-            'users' => $record
-        ],$status);
+        if($record == null){
+            return response()->json(['message' => $message,],$status);
+        }
+        if($message == ''){
+            return response()->json(['users' => $record],$status);
+        }
+        return response()->json(['message' => $message, 'product' => $record],$status);
     }
 
     private function usersResponse(int $numberOfAdmins, $users): JsonResponse {
@@ -27,7 +30,6 @@ class UserController extends Controller
 
     private function adminCounter($users): int {
         $adminCounter = 0;
-
         foreach ($users as $u){
             if($u->role == 2){
                 ++$adminCounter;
@@ -55,7 +57,7 @@ class UserController extends Controller
     }
 
 
-    //API methods
+    //User endpoint methods
     public function getUsers(): JsonResponse {
         $users = User::all();
         return $this->usersResponse($this->adminCounter($users), $users);
@@ -85,25 +87,25 @@ class UserController extends Controller
 
         if($validator->fails()){
             return $this->infoResponse(422, $validator->messages());
-        }else{
-            $user = User::find($request->id);
-
-            if(!$user){
-                return $this->infoResponse(404, 'No user was found with the given id...');
-            }
-
-            $user -> update([
-                'first_name' => $request->first_name,
-                'last_name' => $request->last_name,
-                'email' => $request->email,
-                'phone' => $request->phone,
-                'city' => $request->city,
-                'address' => $request->address,
-                'zip_code' => $request->zip_code,
-            ]);
-
-            return $this->infoResponse(200,'User updated successfully!');
         }
+
+        $user = User::find($request->id);
+
+        if(!$user){
+            return $this->infoResponse(404, 'No user was found with the given id...');
+        }
+
+        $user -> update([
+            'first_name' => $request->first_name,
+            'last_name' => $request->last_name,
+            'email' => $request->email,
+            'phone' => $request->phone,
+            'city' => $request->city,
+            'address' => $request->address,
+            'zip_code' => $request->zip_code,
+        ]);
+
+        return $this->infoResponse(200,'User updated successfully!', $user);
     }
 
     public function banUser($id): JsonResponse {

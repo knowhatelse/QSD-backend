@@ -7,24 +7,25 @@ use App\Models\Order;
 use App\Models\OrderProductSize;
 use App\Models\Product;
 use App\Models\ProductSize;
-use http\Env\Response;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Validator;
-use Psy\Util\Str;
 use Stripe\Stripe;
 use Stripe\PaymentIntent;
 
 class OrderController extends Controller
 {
     private function infoResponse($status, $message, $record = null): JsonResponse {
-        return response()->json([
-            'message' => $message,
-            'data' => $record
-        ],$status);
+        if($record == null){
+            return response()->json(['message' => $message,],$status);
+        }
+        if($message == ''){
+            return response()->json(['data' => $record],$status);
+        }
+        return response()->json(['message' => $message, 'product' => $record],$status);
     }
+
 
     public function payment(Request $request){
         $request->validate([
@@ -112,16 +113,9 @@ class OrderController extends Controller
         return $this->orders();
     }
 
-    public function getOrdersPerUser(Request $request): JsonResponse {
-        $validator = Validator::make($request->all(),[
-            'user_id' => 'integer|required|exists:users,id'
-        ]);
-
-        if($validator->fails()){
-            return $this->infoResponse(404, $validator->messages());
-        }
-
-        return $this->orders($request->user_id);
+    public function getOrdersPerUser(): JsonResponse {
+        $user = Auth::user();
+        return $this->orders($user->id);
     }
 
 }

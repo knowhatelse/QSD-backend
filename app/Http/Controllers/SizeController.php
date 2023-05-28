@@ -11,10 +11,13 @@ class SizeController extends Controller
 {
     //Helpers functions
     private function infoResponse($status, $message, $record = null): JsonResponse {
-        return response()->json([
-            'message' => $message,
-            'size' => $record
-        ],$status);
+        if($record == null){
+            return response()->json(['message' => $message,],$status);
+        }
+        if($message == ''){
+            return response()->json(['size' => $record],$status);
+        }
+        return response()->json(['message' => $message, 'product' => $record],$status);
     }
 
 
@@ -31,11 +34,11 @@ class SizeController extends Controller
 
         if($validator->fails()){
             return $this->infoResponse(422, $validator->messages());
-        }else{
-            $size = Size::create([
-                'size' => $request->size
-            ]);
         }
+
+        $size = Size::create([
+            'size' => $request->size
+        ]);
 
         return $this->infoResponse(200, 'Size added successfully!', $size);
     }
@@ -48,17 +51,17 @@ class SizeController extends Controller
 
         if($validator->fails()){
             return $this->infoResponse(422, $validator->messages());
-        }else{
-            $size = Size::find($request->id);
-
-            if(!$size){
-                return $this->infoResponse(404, 'No size was found in the database with the given id...');
-            }
-
-            $size -> update([
-                'size' => $request->size
-            ]);
         }
+
+        $size = Size::find($request->id);
+
+        if(!$size){
+            return $this->infoResponse(404, 'No size was found in the database with the given id...');
+        }
+
+        $size -> update([
+            'size' => $request->size
+        ]);
 
         return $this->infoResponse(200, 'Size updated successfully!', $size);
     }
