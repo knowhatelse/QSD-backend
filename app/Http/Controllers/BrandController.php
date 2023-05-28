@@ -6,16 +6,18 @@ use App\Models\Brand;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
 
 class BrandController extends Controller
 {
     //Helpers methods
     private function infoResponse($status, $message, $record = null): JsonResponse {
-        return response()->json([
-            'message' => $message,
-            'brand' => $record
-        ],$status);
+        if($record == null){
+            return response()->json(['message' => $message,],$status);
+        }
+        if($message == ''){
+            return response()->json(['brand' => $record],$status);
+        }
+        return response()->json(['message' => $message, 'product' => $record],$status);
     }
 
 
@@ -32,13 +34,13 @@ class BrandController extends Controller
 
         if($validator->fails()){
             return $this->infoResponse(422,$validator->messages());
-        }else{
-            $brand = Brand::create([
-                'name' => $request->name
-            ]);
         }
 
-        return $this->infoResponse(200,'Brand added successfully!');
+        $brand = Brand::create([
+            'name' => $request->name
+        ]);
+
+        return $this->infoResponse(200,'Brand added successfully!', $brand);
     }
 
     public function updateBrand(Request $request): JsonResponse {
@@ -49,19 +51,19 @@ class BrandController extends Controller
 
         if($validator->fails()){
             return $this->infoResponse(422,$validator->messages());
-        }else{
-            $brand = Brand::find($request->id);
-
-            if(!$brand){
-                return $this->infoResponse(404, 'No brand was found in the database with the given id...');
-            }
-
-            $brand->update([
-                'name' => $request->name
-            ]);
-
-            return $this->infoResponse(200, 'Brand updated successfully!', $brand);
         }
+
+        $brand = Brand::find($request->id);
+
+        if(!$brand){
+            return $this->infoResponse(404, 'No brand was found in the database with the given id...');
+        }
+
+        $brand->update([
+            'name' => $request->name
+        ]);
+
+        return $this->infoResponse(200, 'Brand updated successfully!', $brand);
     }
 
     public function deleteBrand($id): JsonResponse {
