@@ -6,6 +6,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ColorController;
 use App\Http\Controllers\FavoriteController;
 
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\RatingController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\SearchController;
@@ -95,5 +96,9 @@ Route::middleware('adminSuperAdmin')->delete('deleteProduct/{id}', [ProductContr
 //Image endpoint routes
 Route::middleware('adminSuperAdmin')->delete('deleteImage/{id}', [ImageController::class, 'deleteImage']);
 
-//Rating endpoint
+//Rating endpoint routes
 Route::middleware('auth:api')->post('rateProduct', [RatingController::class, 'rateProduct']);
+
+//Orders endpoint routes
+Route::middleware('adminSuperAdmin')->get('getOrders', [OrderController::class, 'getOrders']);
+Route::middleware('auth:api')->get('getOrdersPerUser', [OrderController::class, 'getOrdersPerUser']);

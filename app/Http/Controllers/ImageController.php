@@ -8,19 +8,21 @@ use Illuminate\Support\Facades\Validator;
 
 class ImageController extends Controller
 {
+    //Helpers function
     private function infoResponse($status, $message): JsonResponse {
         return response()->json([
             'message' => $message,
         ],$status);
     }
 
+    //Image endpoint methods
     public function deleteImage($id): JsonResponse {
         $validator = Validator::make(['id'=>$id],[
             'id' => 'required|integer|exists:images,id'
         ]);
 
         if($validator->fails()){
-            return $this->infoResponse(404, $validator->messages());
+            return $this->infoResponse(422, $validator->messages());
         }
 
         $image = Image::findOrFail($id);

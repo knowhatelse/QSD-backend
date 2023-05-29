@@ -10,12 +10,15 @@ use Illuminate\Validation\Rule;
 
 class ProductController extends Controller
 {
-    //Private function
+    //Helpers functions
     private function infoResponse($status, $message, $record = null): JsonResponse {
-        return response()->json([
-            'message' => $message,
-            'product' => $record
-        ],$status);
+        if($record == null){
+            return response()->json(['message' => $message,],$status);
+        }
+        if($message == ''){
+            return response()->json(['product' => $record],$status);
+        }
+        return response()->json(['message' => $message, 'product' => $record],$status);
     }
 
     private function storeProductImages(Request $request, Product $product): void {
@@ -32,7 +35,7 @@ class ProductController extends Controller
     }
 
 
-    //API methods
+    //Product endpoint methods
     public function getProducts(): JsonResponse {
         $products = Product::with('brands','colors', 'categories', 'sizes', 'images')->paginate(20);
         return $this->infoResponse(200, '', $products);
@@ -44,7 +47,7 @@ class ProductController extends Controller
         ]);
 
         if($validator->fails()){
-            return $this->infoResponse(404, $validator->messages());
+            return $this->infoResponse(422, $validator->messages());
         }
 
         $products = Product::with('brands','colors', 'categories', 'sizes', 'images')->find($id);
@@ -84,7 +87,7 @@ class ProductController extends Controller
         $product->categories()->sync($request->categories);
         $product->sizes()->sync($request->sizes);
 
-        return $this->infoResponse(200, 'Product added successfully!');
+        return $this->infoResponse(200, 'Product added successfully!', $product);
     }
 
     public function updateProduct(Request $request): JsonResponse {
@@ -105,7 +108,7 @@ class ProductController extends Controller
         ]);
 
         if($validator->fails()){
-            return $this->infoResponse(422, 'You need to add a new image');
+            return $this->infoResponse(422, $validator->messages());
         }
 
         $product = Product::find($request->id);
